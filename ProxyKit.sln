@@ -19,6 +19,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "RunnableRecipes", "Runnable
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignalRSimpleChat", "src\SignalRSimpleChat\SignalRSimpleChat.csproj", "{42BFCF9F-53B9-4600-9183-12349DE9E3D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResponseRewrite", "src\ResponseRewrite\ResponseRewrite.csproj", "{13E56AFF-BB61-4DB1-959F-B91E283C8D4A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{42BFCF9F-53B9-4600-9183-12349DE9E3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42BFCF9F-53B9-4600-9183-12349DE9E3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42BFCF9F-53B9-4600-9183-12349DE9E3D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13E56AFF-BB61-4DB1-959F-B91E283C8D4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13E56AFF-BB61-4DB1-959F-B91E283C8D4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13E56AFF-BB61-4DB1-959F-B91E283C8D4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13E56AFF-BB61-4DB1-959F-B91E283C8D4A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{A10DFD36-8672-4359-988E-6B52B1F96F2A} = {63C061FD-D3D9-4517-9398-2A6F1769022E}
 		{086050F2-0756-4936-A0A6-74851A7FA67F} = {63C061FD-D3D9-4517-9398-2A6F1769022E}
 		{42BFCF9F-53B9-4600-9183-12349DE9E3D9} = {63C061FD-D3D9-4517-9398-2A6F1769022E}
+		{13E56AFF-BB61-4DB1-959F-B91E283C8D4A} = {63C061FD-D3D9-4517-9398-2A6F1769022E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {61D66EC0-2E2A-4AE6-A06E-F8D572DFB319}
