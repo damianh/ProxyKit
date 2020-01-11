@@ -53,7 +53,7 @@ namespace ProxyKit.v3
             public void ConfigureServices(IServiceCollection services)
             {
                 services.AddRouting();
-                services.AddControllers();
+                services.AddReverseProxy();
             }
 
             public void Configure(IApplicationBuilder app)
@@ -68,12 +68,17 @@ namespace ProxyKit.v3
                             var routeValues = ctx.Request.RouteValues;
                             await ctx.Response.WriteAsync(ctx.Request.GetDisplayUrl());
                         });
-                    endpoints.MapReverseProxy("{service}/{*url}", ctx => 
-                        ctx.ForwardTo("http://upstream").Send());
+                    endpoints.MapReverseProxy(
+                        "{service}/{*url}",
+                        async ctx =>
+                        {
+                            var response = await ctx
+                                .ForwardTo("http://upstream")
+                                .Send();
+                            return response;
+                        });
                 });
             }
-
-            public class TestReverseProxy : ReverseProxy { }
         }
 
         public class V3UpstreamStartup

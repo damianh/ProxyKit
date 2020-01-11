@@ -2,6 +2,7 @@
   <Settings>
     <HiddenComponentWarnings>
       <Value>AspNetTestHostCompatibility</Value>
+      <Value>LongTestTimesWithoutParallelExecution</Value>
     </HiddenComponentWarnings>
   </Settings>
 </ProjectConfiguration>

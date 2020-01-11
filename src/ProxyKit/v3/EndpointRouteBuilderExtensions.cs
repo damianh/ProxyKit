@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using ProxyKit;
+using ProxyKit.v3;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.AspNetCore.Builder
@@ -8,28 +8,39 @@ namespace Microsoft.AspNetCore.Builder
     public static class EndpointRouteBuilderExtensions
     {
         private const string DefaultDisplayName = "ProxyKit";
+        private const string CatchAllRoutePattern = "{*url}";
+
+        public static IEndpointConventionBuilder MapReverseProxy(
+            this IEndpointRouteBuilder routes,
+            HandleReverseProxyRequest handleProxyRequest) =>
+            MapReverseProxy(routes, CatchAllRoutePattern, handleProxyRequest);
 
         public static IEndpointConventionBuilder MapReverseProxy(
             this IEndpointRouteBuilder routes,
             string pattern,
-            HandleProxyRequest handleProxyRequest)
+            HandleReverseProxyRequest handleReverseProxyRequest)
         {
             var pipeline = routes.CreateApplicationBuilder()
-                .UseMiddleware<ProxyMiddleware<HandleProxyRequestWrapper>>(
-                    new HandleProxyRequestWrapper(handleProxyRequest))
+                .UseMiddleware<ReverseProxyMiddleware<DelegateReverseProxyHandler>>(
+                    new DelegateReverseProxyHandler(handleReverseProxyRequest))
                 .Build();
 
             return routes
                 .Map(pattern, pipeline)
-                .WithDisplayName("DefaultDisplayName");
+                .WithDisplayName(DefaultDisplayName);
         }
 
-        /*
-        public static void MapReverseProxy<TReverseProxy>(
-            this IEndpointRouteBuilder endpoints,
-            string pattern,
-            Action<ReverseProxyOptions> configureOptions) where TReverseProxy : ReverseProxy
-        { }
-        */
+        public static IEndpointConventionBuilder MapReverseProxy<TReverseProxyHandler>(
+            this IEndpointRouteBuilder routes,
+            string pattern) where TReverseProxyHandler : IReverseProxyHandler
+        {
+            var pipeline = routes.CreateApplicationBuilder()
+                .UseMiddleware<ReverseProxyMiddleware<TReverseProxyHandler>>()
+                .Build();
+
+            return routes
+                .Map(pattern, pipeline)
+                .WithDisplayName(DefaultDisplayName);
+        }
     }
 }
