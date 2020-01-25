@@ -12,19 +12,41 @@ namespace ProxyKit.v3
         ///     Forward the request to the specified upstream host.
         /// </summary>
         /// <param name="context">The HttpContext</param>
-        /// <param name="upstreamHost">The upstream host to forward the requests
-        /// to.</param>
+        /// <param name="upstreamHost">The upstream host to forward the request to.</param>
+        /// <param name="customizeUri">An action allowing customization of the URI the request is forwarded to.</param>
         /// <returns>A <see cref="ForwardContext"/> that represents the
         /// forwarding request context.</returns>
-        public static ForwardContext ForwardTo(this HttpContext context, UpstreamHost upstreamHost)
+        public static ForwardContext ForwardToV3(
+            this HttpContext context,
+            UpstreamHost upstreamHost,
+            Action<UriBuilder>? customizeUri = default)
         {
-            var uri = new Uri(UriHelper.BuildAbsolute(
+            var catchAllUrl = context.Request.RouteValues.TryGetValue("url", out var url) 
+                ? (string) url
+                : "";
+            var uriString = UriHelper.BuildAbsolute(
                 upstreamHost.Scheme,
                 upstreamHost.Host,
                 upstreamHost.PathBase,
-                context.Request.Path,
-                context.Request.QueryString));
+                "/" + catchAllUrl,
+                context.Request.QueryString);
 
+            Uri uri;
+            if (customizeUri != null)
+            {
+                var uriBuilder = new UriBuilder(uriString);
+                customizeUri(uriBuilder);
+                if (!uriBuilder.Uri.IsAbsoluteUri)
+                {
+                    throw new InvalidOperationException($"{nameof(uri)} must be absolute.");
+                }
+                uri = uriBuilder.Uri;
+            }
+            else
+            {
+                uri = new Uri(uriString);
+            }
+            
             var request = context.Request.CreateProxyHttpRequest();
             request.Headers.Host = uri.Authority;
             request.RequestUri = uri;

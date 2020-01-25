@@ -4,8 +4,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ProxyKit.v3;
 
 #pragma warning disable 1998
 
@@ -46,8 +48,7 @@ namespace ProxyKit.v3
                 {
                     routes.MapReverseProxy("/realserver/{*url}", context =>
                     {
-                        var forwardContext = context.ForwardTo("http://localhost:" + port + "/");
-
+                        var forwardContext = context.ForwardToV3($"http://localhost:{port}");
                         return forwardContext
                             .AddXForwardedHeaders()
                             .Send();
@@ -89,7 +90,7 @@ namespace ProxyKit.v3
                 var port = _config.GetValue("Port", 0);
 
                 return context
-                    .ForwardTo("http://localhost:" + port + "/")
+                    .ForwardToV3("http://localhost:" + port + "/")
                     .AddXForwardedHeaders()
                     .Send();
             }
