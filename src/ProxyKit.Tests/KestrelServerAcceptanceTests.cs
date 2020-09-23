@@ -25,11 +25,17 @@ namespace ProxyKit
 
         protected override int ProxyPort => _proxyServer.GetServerPort();
 
-        protected override HttpClient CreateClient() =>
-            new HttpClient
+        protected override HttpClient CreateClient()
+        {
+            var handler = new SocketsHttpHandler
+            {
+                AllowAutoRedirect = false
+            };
+            return new HttpClient(handler)
             {
                 BaseAddress = new Uri($"http://localhost:{ProxyPort}")
             };
+        }
 
         [Fact]
         public async Task When_upstream_host_is_not_running_then_should_get_service_unavailable()
@@ -82,6 +88,16 @@ namespace ProxyKit
             await clientWebSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Close", CancellationToken.None);
         }
 
+        [Fact]
+        public async Task Issue_222()
+        {
+            var client = CreateClient();
+
+            var response = await client.GetAsync("/222");
+
+            response.StatusCode.ShouldBe(HttpStatusCode.Moved);
+        }
+
         private async Task SendText(ClientWebSocket clientWebSocket, string s)
         {
             var bytes = Encoding.UTF8.GetBytes(s);
@@ -115,7 +131,7 @@ namespace ProxyKit
                 {
                     services
                         .AddProxy(httpClientBuilder => httpClientBuilder
-                            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(1)));
+                            .ConfigureHttpClient(client => client.Timeout = TimeSpan.FromSeconds(5)));
                 })
                 .Build();
            

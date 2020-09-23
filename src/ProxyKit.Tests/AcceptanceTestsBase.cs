@@ -268,6 +268,22 @@ namespace ProxyKit
                         options => options.SetRequestHeader("X-TraceId", "123"));
                 });
 
+                app.Map("/222", issue222 =>
+                {
+                    issue222.RunProxy(async context =>
+                    {
+                        try
+                        {
+                            var response = await context.ForwardTo("https://httpstat.us/301").Send();
+                            return response;
+                        }
+                        catch (Exception ex)
+                        {
+                            throw;
+                        }
+                    });
+                });
+
                 app.RunProxy<ProxyHandler>();
             }
         }
